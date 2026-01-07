@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>M-TSK</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="M-TSK">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/96/microsoft-to-do-app.png">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/96/microsoft-to-do-app.png">
+
+    <style>
+        /* 全画面リセット */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000; overflow: hidden;
+        }
+        /* iframeを画面いっぱいに強制拡張 */
+        #app-frame {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            border: none; z-index: 10;
+        }
+        /* ロード中の表示 */
+        #loader {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff8c00; font-family: monospace; z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="loader">INITIALIZING LAUNCHER...</div>
+
+    <iframe id="app-frame" src="https://script.google.com/macros/s/AKfycbz49IhIZ5ziQEn83v88Jss0wXrV44-zL1lrY-Rl1Rvsbh_ia3touFvAexKYBpc6LO7Z/exec"></iframe>
+
+</body>
+</html>
