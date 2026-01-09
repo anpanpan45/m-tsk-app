@@ -15,22 +15,33 @@
   
   <style>
     body { background-color: #000; color: #ff8c00; font-family: monospace; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-    #setup-box { text-align: center; padding: 20px; width: 80%; max-width: 400px; }
-    input { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #ff8c00; color: #fff; border-radius: 5px; }
-    button { background: #ff8c00; color: #000; border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
-    #app-frame { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: none; z-index: 10; display: none; }
+    #setup-box { text-align: center; padding: 20px; width: 85%; max-width: 400px; }
+    h2 { border-bottom: 2px solid #ff8c00; padding-bottom: 10px; margin-bottom: 20px; }
+    p { font-size: 0.9rem; line-height: 1.5; color: #ccc; }
+    input { width: 100%; padding: 12px; margin: 15px 0; background: #222; border: 1px solid #ff8c00; color: #fff; border-radius: 5px; font-size: 1rem; box-sizing: border-box; }
+    button { background: #ff8c00; color: #000; border: none; padding: 15px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; font-size: 1rem; transition: 0.2s; }
+    button:active { transform: scale(0.98); opacity: 0.8; }
+    #app-frame { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: none; z-index: 10; display: none; -webkit-overflow-scrolling: touch; }
     .hidden { display: none !important; }
-    small { display: block; margin-top: 15px; color: #666; font-size: 0.7rem; }
+    small { display: block; margin-top: 20px; color: #666; font-size: 0.7rem; }
+    .error-msg { color: #ff4444; font-size: 0.8rem; margin-top: 5px; display: none; }
   </style>
 </head>
 <body>
 
   <div id="setup-box">
     <h2>SYSTEM SETUP</h2>
-    <p>GASウェブアプリのURLを入力してください</p>
-    <input type="text" id="url-input" placeholder="https://script.google.com/..." />
+    <p>GASウェブアプリのURLを<br>貼り付けてください</p>
+    
+    <input type="text" id="url-input" placeholder="https://script.google.com/..." oninput="clearError()">
+    <div id="error-msg" class="error-msg"></div>
+    
     <button onclick="saveAndLaunch()">CONNECT SYSTEM</button>
-    <small>※URLは端末に保存されます。<br>リセットするには再インストールしてください。</small>
+    
+    <small>
+      ※URLは端末内に保存されます。<br>
+      ※リセットする場合はアプリを削除し、<br>再度ホーム画面に追加してください。
+    </small>
   </div>
 
   <iframe id="app-frame" allow="geolocation; microphone; camera"></iframe>
@@ -40,19 +51,39 @@
     const savedUrl = localStorage.getItem('m-tsk-url');
     const iframe = document.getElementById('app-frame');
     const setupBox = document.getElementById('setup-box');
+    const errorDiv = document.getElementById('error-msg');
 
     if (savedUrl) {
       launch(savedUrl);
     }
 
+    function clearError() {
+      errorDiv.style.display = 'none';
+      errorDiv.innerText = '';
+    }
+
     function saveAndLaunch() {
-      const input = document.getElementById('url-input').value;
-      if (!input.startsWith('https://script.google.com/')) {
-        alert('正しいGASのURLを入力してください');
+      const inputElement = document.getElementById('url-input');
+      // ★修正1：前後の空白を自動で削除（トリム処理）
+      let inputUrl = inputElement.value.trim();
+
+      // ★修正2：バリデーション緩和
+      // "https://script.google.com/" で始まってさえいればOKとする
+      // 余計な正規表現チェックは削除しました
+      if (!inputUrl.startsWith('https://script.google.com/')) {
+        errorDiv.innerText = 'エラー：URLは "https://script.google.com/" で始まる必要があります。コピー範囲を確認してください。';
+        errorDiv.style.display = 'block';
         return;
       }
-      localStorage.setItem('m-tsk-url', input);
-      launch(input);
+
+      // 念のため、http だった場合は https に補正
+      if (inputUrl.startsWith('http://script.google.com/')) {
+        inputUrl = inputUrl.replace('http://', 'https://');
+      }
+
+      // 保存して起動
+      localStorage.setItem('m-tsk-url', inputUrl);
+      launch(inputUrl);
     }
 
     function launch(url) {
