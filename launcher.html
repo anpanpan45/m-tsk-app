@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="M-TSK">
+  <meta name="theme-color" content="#000000">
+  
+  <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/96/microsoft-to-do-app.png">
+  <link rel="icon" href="https://img.icons8.com/fluency/96/microsoft-to-do-app.png">
+  <title>M-TSK Setup</title>
+  
+  <style>
+    body { background-color: #000; color: #ff8c00; font-family: monospace; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+    #setup-box { text-align: center; padding: 20px; width: 80%; max-width: 400px; }
+    input { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #ff8c00; color: #fff; border-radius: 5px; }
+    button { background: #ff8c00; color: #000; border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
+    #app-frame { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: none; z-index: 10; display: none; }
+    .hidden { display: none !important; }
+    small { display: block; margin-top: 15px; color: #666; font-size: 0.7rem; }
+  </style>
+</head>
+<body>
+
+  <div id="setup-box">
+    <h2>SYSTEM SETUP</h2>
+    <p>GASウェブアプリのURLを入力してください</p>
+    <input type="text" id="url-input" placeholder="https://script.google.com/..." />
+    <button onclick="saveAndLaunch()">CONNECT SYSTEM</button>
+    <small>※URLは端末に保存されます。<br>リセットするには再インストールしてください。</small>
+  </div>
+
+  <iframe id="app-frame" allow="geolocation; microphone; camera"></iframe>
+
+  <script>
+    // 起動時に保存されたURLがあるかチェック
+    const savedUrl = localStorage.getItem('m-tsk-url');
+    const iframe = document.getElementById('app-frame');
+    const setupBox = document.getElementById('setup-box');
+
+    if (savedUrl) {
+      launch(savedUrl);
+    }
+
+    function saveAndLaunch() {
+      const input = document.getElementById('url-input').value;
+      if (!input.startsWith('https://script.google.com/')) {
+        alert('正しいGASのURLを入力してください');
+        return;
+      }
+      localStorage.setItem('m-tsk-url', input);
+      launch(input);
+    }
+
+    function launch(url) {
+      setupBox.classList.add('hidden');
+      iframe.src = url;
+      iframe.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
